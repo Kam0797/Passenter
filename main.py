@@ -1,5 +1,5 @@
-# Distributed under GPL version-2 or later licence.
-# Passbook_to_excel.[Passenter] version : 0.2
+# Distributed under GNU GPL version-3  licence.
+# Passbook_to_excel.[Passenter] version : 0.3
 # This maybe considered the first alpha version of this application
 
 
