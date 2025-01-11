@@ -9,6 +9,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from getpass import getpass
 
 
 from settings import * #dont delete it!
@@ -162,13 +163,14 @@ def is_valid_transaction(benchmark,test):
         return False
     return True 
 
-def convert_to_txt(path):
-    try:
-        subprocess.run(["pdftotext", "-layout", f"{INPUT_FILE_PATH}", f"{TEXT_DIR_PATH}{TEXT_FILE}"])
-        return path
-    except Exception as e:
-        print('Error:',e)
-    return False
+# def convert_to_txt(path):
+#     from getpass import getpass
+#     try:
+#         subprocess.run(["pdftotext", "-layout", f"{INPUT_FILE_PATH}", f"{TEXT_DIR_PATH}{TEXT_FILE}"])
+#         return path
+#     except Exception as e:
+#         print('Error:',e)
+#     return False
 
 def create_output_dirs(text_dir_path,output_dir_path):
     try:
@@ -180,6 +182,40 @@ def create_output_dirs(text_dir_path,output_dir_path):
         return True
     except Exception as e:
         print("There's an error in creating output directories.\nError",e)
+        return False
+
+def get_n_check_pw(input_file_path,output_file_path,has_password = False):
+    file_password = ''
+    if has_password == True:
+        file_password = getpass("Enter password :")
+    try:
+        result = subprocess.run(["pdftotext","-layout","-upw",file_password,input_file_path,output_file_path],stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
+        return True
+    except subprocess.CalledProcessError as e:
+        error_message = e.stderr.decode()
+        if "Incorrect password" in error_message:
+            return False
+        else:
+            print("Error while opening input file::",e.stdout.decode())
+            return None
+
+def convert_to_txt(input_file_path,output_file_path):
+    pw_passed = get_n_check_pw(input_file_path,output_file_path)
+    print(pw_passed)
+    if pw_passed == True:
+        return True
+    elif pw_passed == False:
+        print("This file is password protected.\n")
+        password_retry_counter = 0
+        # while(get_n_check_pw("kris0593.pdf","kris.txt",has_password=True) == False and password_retry_limit < 2):
+        while(password_retry_counter < 3):
+            if get_n_check_pw(input_file_path,output_file_path,has_password=True) == False:
+                print(f"Incorrect password, Retry [{2-password_retry_counter} attempts left]\n")
+                password_retry_counter += 1
+            # elif password_retry_counter <2:
+            else:
+                return True
+    else:
         return False
 
 INPUT_FILE_PATH = input("Enter file path [or you can drag 'n drop!]: ")
@@ -229,9 +265,9 @@ if is_pdf(INPUT_FILE_PATH):
  #   print(TEXT_DIR_PATH,OUTPUT_DIR_PATH)
     create_output_dirs(TEXT_DIR_PATH,OUTPUT_DIR_PATH)
 
-    print("Input file: ",TEXT_FILE) #@@
-
-    if(convert_to_txt(f"{INPUT_FILE_PATH}")):
+    print("Input file: ",TEXT_FILE,'\nder :') #@@
+    print(INPUT_FILE_PATH,f"{TEXT_DIR_PATH}{TEXT_FILE}")
+    if(convert_to_txt(INPUT_FILE_PATH,f"{TEXT_DIR_PATH}{TEXT_FILE}")):
         with open(f"{TEXT_DIR_PATH}{TEXT_FILE}",'r') as file: 
 
             txt = file.read()
