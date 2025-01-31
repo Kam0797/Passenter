@@ -1,6 +1,20 @@
 # Distributed under GNU GPL version-3  licence.
 # Passbook_to_excel.[Passenter] version : 0.3
-# This maybe considered the first alpha version of this application
+
+# Copyright (C) 2025, Kam <gv.kamal2003@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.html>.
 
 
 #################################
@@ -11,20 +25,17 @@ import sys
 from pathlib import Path
 from getpass import getpass
 
-
 from settings import * #dont delete it!
 
-root_file = os.path.abspath(__file__)
-root_path = os.path.dirname(root_file)
+# root_path imported from src/settings
 venv_path = os.path.join(root_path,"p_env")
-# print('k',root_path)
 
 if os.name == "nt":
     import setup_windows
 else:
     import setup_linux
-import py_setup
-# breakpoint()
+# import py_setup # imported in passenter.py
+
 import filetype
 from openpyxl import Workbook
 
@@ -216,11 +227,37 @@ def is_valid_path(path_to_check):
         return True
     return False
 
+def supports_ansi():
+    # Check if output is a terminal (not a pipe or file)
+    if not sys.stdout.isatty():
+        return False
+    
+    # Check for ANSI-supporting terminal
+    term = os.getenv("TERM", "")
+    if term in ("dumb", ""):
+        return False
 
+    # Windows-specific check
+    if os.name == "nt":
+        try:
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            mode = ctypes.c_uint()
+            if kernel32.GetConsoleMode(kernel32.GetStdHandle(-11), ctypes.byref(mode)):
+                return True
+        except Exception:
+            return False
+        return False
 
+    return True  # Assume ANSI support for Unix-like systems
 
-print(f"\n\t\033[1;36mPassenter :\033[0m \033[36mA cool tool to covert passbooks to .xlsx \033[0m\n\t\033[34mSource code at\033[0m \033[4;34mhttps://github.com/Kam0797/Passenter\033[0m\n\t\033[33mdo drop your comments at \033[4mgv.kamal2003@gmail.com\033[0m\n ")
+ 
+if supports_ansi():
+    print(f"\n\t\033[1;36mPassenter :\033[0m \033[36mA cool tool to covert passbooks to .xlsx \033[0m\n\t\033[34mSource code at\033[0m \033[4;34mhttps://github.com/Kam0797/Passenter\033[0m\n\t\033[33mdo drop your comments at \033[4mgv.kamal2003@gmail.com\033[0m\n ")
+else:
+    print(f"\n\tPassenter : A cool tool to covert passbooks to .xlsx \n\tSource code at https://github.com/Kam0797/Passenter\n\tdo drop your comments at gv.kamal2003@gmail.com\n ")
 
+# print(colored('Passenter : A cool tool to covert passbooks to .xlsx','cyan',attrs=[]))
 while True:
     INPUT_FILE_PATH = input("Enter file path [you can drag 'n drop!][or 'e' to exit]: ").replace("'",'').strip()
     if INPUT_FILE_PATH == 'e' or INPUT_FILE_PATH == 'E':
@@ -469,10 +506,16 @@ while True:
             #     print(row)
             # print(errors)
             # print(misc)
-            print("\033[1;32mprobably done!\033[0m")
+            if supports_ansi:
+				print("\033[1;32mprobably done!\033[0m")
+			else:
+				print("probably done!")
     else:
         print("\tThe input file doesn't seem to be a pdf file...[or some other error] check it" )
     print('\nthen,')
 print("Bye!")            
+
+            
+ 
 
             
