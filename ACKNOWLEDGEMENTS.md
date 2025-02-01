@@ -32,7 +32,7 @@ This project makes use of the following third-party software components, which a
 
 For more details about each dependency's license, refer to the `licenses/` directory.  
 
-###### And I am so grateful to mn, sh, nf, mk, yu for their warm support❤️
+##### And I am so grateful to mn, sh, nf, mk, yu for their warm support❤️
 ---  
 End of NOTICE
 
