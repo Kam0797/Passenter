@@ -21,6 +21,20 @@ def is_pdf(path):
         print('\tError:',e)
     return False
 
+def file_path_compat(path):
+    res = ''
+    res_temp = ''
+    last_index = len(path)-1
+    for i in range(len(path)):
+        res_temp+= path[i]
+        if path[i] == os.sep or i == last_index :
+            if res_temp.find(' ') == -1:
+                res+= res_temp
+            else:
+                res+= f'"{res_temp[:-1]}"{os.sep}'
+            res_temp = ''
+    return res
+
 def get_merge_choice(merge_choice):
     # print('mer',len(merge_choice),'f')
     if merge_choice == 'y' or merge_choice == 'Y':

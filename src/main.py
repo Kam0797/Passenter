@@ -49,11 +49,13 @@ from functions import *
 if supports_ansi():
     print(f"\n\t\033[1;36mPassenter :\033[0m \033[36mA cool tool to covert passbooks to .xlsx \033[0m\n\t\033[34mSource code at\033[0m \033[4;34mhttps://github.com/Kam0797/Passenter\033[0m\n\t\033[33mdo drop your comments at \033[4mgv.kamal2003@gmail.com\033[0m\n ")
 else:
-    print(f"\n\tPassenter : A cool tool to covert passbooks to .xlsx \n\tSource code at https://github.com/Kam0797/Passenter\n\tdo drop your comments at gv.kamal2003@gmail.com\n ")
+    print(f"\n\tPassenter : A cool tool to convert passbooks to .xlsx \n\tSource code at https://github.com/Kam0797/Passenter\n\tdo drop your comments at gv.kamal2003@gmail.com\n ")
 
 # print(colored('Passenter : A cool tool to covert passbooks to .xlsx','cyan',attrs=[]))
 while True:
     INPUT_FILE_PATH = input("Enter file path [you can drag 'n drop!][or 'e' to exit]: ").replace("'",'').strip()
+    # INPUT_FILE_PATH = file_path_compat(INPUT_FILE_PATH)
+    print(INPUT_FILE_PATH)
     if INPUT_FILE_PATH == 'e' or INPUT_FILE_PATH == 'E':
         print("Bye!")
         exit()
@@ -300,7 +302,8 @@ while True:
             #     print(row)
             # print(errors)
             # print(misc)
-            if supports_ansi:
+            print(atr)
+            if supports_ansi():
                 print("\033[1;32mprobably done!\033[0m")
             else:
                 print("probably done!")
